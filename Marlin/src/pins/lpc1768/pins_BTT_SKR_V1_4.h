@@ -38,8 +38,6 @@
 #define X_DIAG_PIN                         P1_29  // X-STOP
 #define Y_DIAG_PIN                         P1_28  // Y-STOP
 #define Z_DIAG_PIN                         P1_27  // Z-STOP
-//#define E0_DIAG_PIN                        P1_26  // E0DET
-//#define E1_DIAG_PIN                        P1_25  // E1DET
 
 //
 // Limit Switches
@@ -131,16 +129,9 @@
    * If undefined software serial is used according to the pins below
    */
   //#define X_HARDWARE_SERIAL  Serial
-  //#define X2_HARDWARE_SERIAL Serial1
   //#define Y_HARDWARE_SERIAL  Serial1
-  //#define Y2_HARDWARE_SERIAL Serial1
   //#define Z_HARDWARE_SERIAL  Serial1
-  //#define Z2_HARDWARE_SERIAL Serial1
-  //#define E0_HARDWARE_SERIAL Serial1
-  //#define E1_HARDWARE_SERIAL Serial1
-  //#define E2_HARDWARE_SERIAL Serial1
-  //#define E3_HARDWARE_SERIAL Serial1
-  //#define E4_HARDWARE_SERIAL Serial1
+
 
   //
   // Software serial
@@ -292,29 +283,7 @@
 
       #define LCD_RESET_PIN                P1_20  // Must be high or open for LCD to operate normally.
 
-      #if EITHER(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
-        #ifndef RGB_LED_R_PIN
-          #define RGB_LED_R_PIN            P1_21
-        #endif
-        #ifndef RGB_LED_G_PIN
-          #define RGB_LED_G_PIN            P1_22
-        #endif
-        #ifndef RGB_LED_B_PIN
-          #define RGB_LED_B_PIN            P1_23
-        #endif
-      #elif ENABLED(FYSETC_MINI_12864_2_1)
-        #define NEOPIXEL_PIN               P1_21
-      #endif
-
     #else                                         // !FYSETC_MINI_12864
-
-      #if ENABLED(MKS_MINI_12864)
-        #define DOGLCD_CS                  P1_21
-        #define DOGLCD_A0                  P1_22
-        #define DOGLCD_SCK                 P0_15
-        #define DOGLCD_MOSI                P0_18
-        #define FORCE_SOFT_SPI
-      #endif
 
       #if ENABLED(ULTIPANEL)
         #define LCD_PINS_D5                P1_21

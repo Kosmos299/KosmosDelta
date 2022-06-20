@@ -27,14 +27,14 @@
  * Basic settings such as:
  * Advanced settings can be found in Configuration_adv.h
  */
-#define CONFIGURATION_H_VERSION 020320
+#define CONFIGURATION_H_VERSION 220522
 
 //===========================================================================
 //============================= DELTA Printer ===============================
 //===========================================================================
 
 // @section info
-#define STRING_CONFIG_H_AUTHOR "(BTT + Custom Delta, D.Adamik 26.05.2021)" // Author info of this build printed to the host during boot and M115
+#define STRING_CONFIG_H_AUTHOR "(BTT + Custom Delta, D.Adamik 22.05.2022)" // Author info of this build printed to the host during boot and M115
 // @section machine
 
 /**
@@ -47,12 +47,13 @@
  * BAUDRATE
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
-#define SERIAL_PORT 0
-#define SERIAL_PORT_2 -1
+#define SERIAL_PORT 0     //LCD Port
+#define SERIAL_PORT_2 -1  //USB to PC
 #define BAUDRATE 115200
 
 #ifndef MOTHERBOARD
   #define MOTHERBOARD BOARD_BTT_SKR_V1_4 // Choose the name from boards.h that matches your setup
+                                         // Pins moded for sensorless probing
 #endif
 
 #define CUSTOM_MACHINE_NAME "Delta Kosmos" // Name displayed in the LCD "Ready" message and Info menu
@@ -108,6 +109,7 @@
  *    21 : Pt100 with circuit in the Ultimainboard V2.x with 3.3v excitation (STM32 \ LPC176x....)
  *    22 : 100k (hotend) with 4.7k pullup to 3.3V and 220R to analog input (as in GTM32 Pro vB)
  *    23 : 100k (bed) with 4.7k pullup to 3.3v and 220R to analog input (as in GTM32 Pro vB)
+ *    47 : VISHAY NTCALUG03A473HC, B25 = 3740. R25 = 47k
  *   201 : Pt100 with circuit in Overlord, similar to Ultimainboard V2.x
  *    60 : 100k Maker's Tool Works Kapton Bed Thermistor beta=3950
  *    61 : 100k Formbot / Vivedino 3950 350C thermistor 4.7k pullup
@@ -159,7 +161,7 @@
 // Above this temperature the heater will be switched off.
 // This can protect components from overheating, but NOT from shorts and failures.
 // (Use MINTEMP for thermistor short/failure protection.)
-#define HEATER_0_MAXTEMP 275
+#define HEATER_0_MAXTEMP 300
 #define BED_MAXTEMP      125
 
 
@@ -243,7 +245,7 @@
 // Enable DELTA kinematics and most of the default configuration for Deltas
 #define DELTA
 // NOTE NB all values for DELTA_* values MUST be floating point, so always have a decimal point in them
-#define DELTA_SEGMENTS_PER_SECOND 200.0 // Make delta curves from many straight lines (linear interpolation).
+#define DELTA_SEGMENTS_PER_SECOND 100.0 // Make delta curves from many straight lines (linear interpolation). //200?
 #define DELTA_HOME_TO_SAFE_ZONE // After homing move down to a height where XY movement is unconstrained
 
 //============================== Delta Calibration ==========================
@@ -255,16 +257,16 @@
 //============================== Delta Geometry =============================
 #define DELTA_DIAGONAL_ROD 248.88 // (mm)  // Center-to-center distance of the holes in the diagonal push rods.
 #define DELTA_PRINTABLE_RADIUS 110.0    // (mm) // Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
-#define DELTA_HEIGHT 279.1814           //(mm) Get this value from G33 auto calibrate // Distance between bed and nozzle Z home position
+#define DELTA_HEIGHT 290 //279.1814           //(mm) Get this value from G33 auto calibrate // Distance between bed and nozzle Z home position
 #define DELTA_SMOOTH_ROD_OFFSET 186   // (mm) // Horizontal offset from middle of printer to smooth rod center.
 #define DELTA_EFFECTOR_OFFSET 22      // (mm) // Horizontal offset of the universal joints on the end effector.
 #define DELTA_CARRIAGE_OFFSET 24    // (mm) // Horizontal offset of the universal joints on the carriages.
 #define DELTA_RADIUS 140.8603 // new data from escher calibration // Horizontal distance bridged by diagonal push rods when effector is centered.
 
-//#define DELTA_ENDSTOP_ADJ { 0.0, 0.0, 0.0 }
-#define DELTA_ENDSTOP_ADJ { -0.52, -0.31, 0.0 } // Get these values from G33 auto calibrate
-//#define DELTA_TOWER_ANGLE_TRIM { 0.0, 0.0, 0.0 } 
-#define DELTA_TOWER_ANGLE_TRIM { 0.3603, 0.2658, -0.6261 } // Get these values from G33 auto calibrate
+#define DELTA_ENDSTOP_ADJ { 0.0, 0.0, 0.0 }
+//#define DELTA_ENDSTOP_ADJ { -0.52, -0.31, 0.0 } // Get these values from G33 auto calibrate
+#define DELTA_TOWER_ANGLE_TRIM { 0.0, 0.0, 0.0 } 
+//#define DELTA_TOWER_ANGLE_TRIM { 0.3603, 0.2658, -0.6261 } // Get these values from G33 auto calibrate
 // Delta radius and diagonal rod adjustments (mm)
 //#define DELTA_RADIUS_TRIM_TOWER { 0.0, 0.0, 0.0 }
 //#define DELTA_DIAGONAL_ROD_TRIM_TOWER { 0.0, 0.0, 0.0 }
@@ -292,10 +294,10 @@
   //#define ENDSTOPPULLUP_XMAX
   //#define ENDSTOPPULLUP_YMAX
   //#define ENDSTOPPULLUP_ZMAX
-  #define ENDSTOPPULLUP_XMIN
-  #define ENDSTOPPULLUP_YMIN
-  #define ENDSTOPPULLUP_ZMIN
-  #define ENDSTOPPULLUP_ZMIN_PROBE
+  //#define ENDSTOPPULLUP_XMIN
+  //#define ENDSTOPPULLUP_YMIN
+  //#define ENDSTOPPULLUP_ZMIN
+  //#define ENDSTOPPULLUP_ZMIN_PROBE
 #endif
 
 // Enable pulldown for all endstops to prevent a floating state
@@ -318,7 +320,7 @@
 #define X_MAX_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
 #define Y_MAX_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
 #define Z_MAX_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
-#define Z_MIN_PROBE_ENDSTOP_INVERTING true // Set to true to invert the logic of the probe.
+#define Z_MIN_PROBE_ENDSTOP_INVERTING false // Set to true to invert the logic of the probe.
 
 /**
  * Stepper Drivers
@@ -359,8 +361,8 @@
  * Override with M92
  *                                      X, Y, Z, E0
  */
-#define DEFAULT_XYZ_STEPS_PER_UNIT  100
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 100, 100, 100, 96 }
+#define DEFAULT_XYZ_STEPS_PER_UNIT  105
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 105.5, 105.5, 105.5, 93 }
 
 /**
  * Default Max Feed Rate (mm/s)
@@ -422,8 +424,6 @@
 // @section probes
 
 /**
- * Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN
- *
  * Enable this option for a probe connected to the Z Min endstop pin.
  */
 #define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN
@@ -437,7 +437,6 @@
  * Requires stallGuard-capable Trinamic stepper drivers.
  */
 #define SENSORLESS_PROBING 1
-
 /**
  * Nozzle-to-Probe offsets { X, Y, Z }
  *
@@ -469,15 +468,14 @@
  *     O-- FRONT --+
  */
 #define NOZZLE_TO_PROBE_OFFSET { 0, 0, 0 }
-
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
 #define PROBING_MARGIN 20
 
 #define XY_PROBE_SPEED 3000// X and Y axis travel speed (mm/min) between probes(50mm*60s = 3000)
-#define HOMING_FEEDRATE_Z  3000//(50mm*60s = 3000) // Delta only homes to Z
-#define Z_PROBE_SPEED_FAST HOMING_FEEDRATE_Z // Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
-#define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 2) // Feedrate (mm/min) for the "accurate" probe of each point
+#define HOMING_FEEDRATE_Z  XY_PROBE_SPEED//(50mm*60s = 3000) // Delta only homes to Z
+#define Z_PROBE_SPEED_FAST XY_PROBE_SPEED // Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
+#define Z_PROBE_SPEED_SLOW XY_PROBE_SPEED//(Z_PROBE_SPEED_FAST / 2) // Feedrate (mm/min) for the "accurate" probe of each point
 
 /**
  * Z probes require clearance when deploying, stowing, and moving between
@@ -493,19 +491,19 @@
  * Example: `M851 Z-5` with a CLEARANCE of 4  =>  9mm from bed to nozzle.
  *     But: `M851 Z+1` with a CLEARANCE of 2  =>  2mm from bed to nozzle.
  */
-#define Z_CLEARANCE_DEPLOY_PROBE    4 // Z Clearance for Deploy/Stow
-#define Z_CLEARANCE_BETWEEN_PROBES  5 // Z Clearance between probe points
-#define Z_CLEARANCE_MULTI_PROBE     5 // Z Clearance between multiple probes
-//#define Z_AFTER_PROBING           5 // Z position after probing is done
+#define Z_CLEARANCE_DEPLOY_PROBE    2 // Z Clearance for Deploy/Stow
+#define Z_CLEARANCE_BETWEEN_PROBES  2 // Z Clearance between probe points
+#define Z_CLEARANCE_MULTI_PROBE     2 // Z Clearance between multiple probes
+#define Z_AFTER_PROBING             2 // Z position after probing is done
 
-#define Z_PROBE_LOW_POINT          -50 // Farthest distance below the trigger-point to go before stopping
+#define Z_PROBE_LOW_POINT          -10 // Farthest distance below the trigger-point to go before stopping
 
 // For M851 give a range for adjusting the Z probe offset
-#define Z_PROBE_OFFSET_RANGE_MIN -20
-#define Z_PROBE_OFFSET_RANGE_MAX 20
+#define Z_PROBE_OFFSET_RANGE_MIN -10
+#define Z_PROBE_OFFSET_RANGE_MAX  10
 
 // Enable the M48 repeatability test to test probe accuracy
-//#define Z_MIN_PROBE_REPEATABILITY_TEST
+#define Z_MIN_PROBE_REPEATABILITY_TEST
 
 // For Inverting Stepper Enable Pins (Active Low) use 0, Non Inverting (Active High) use 1
 // :{ 0:'Low', 1:'High' }
@@ -556,13 +554,13 @@
 #define X_BED_SIZE ((DELTA_PRINTABLE_RADIUS) * 2)
 #define Y_BED_SIZE ((DELTA_PRINTABLE_RADIUS) * 2)
 
-// Travel limits (mm) after homing, corresponding to endstop positions.
+// Travel limits (mm) after homing, corresponding to software endstop positions.
 #define X_MIN_POS -(DELTA_PRINTABLE_RADIUS)
 #define Y_MIN_POS -(DELTA_PRINTABLE_RADIUS)
-#define Z_MIN_POS 0
+#define Z_MIN_POS -10 
 #define X_MAX_POS DELTA_PRINTABLE_RADIUS
 #define Y_MAX_POS DELTA_PRINTABLE_RADIUS
-#define Z_MAX_POS MANUAL_Z_HOME_POS
+#define Z_MAX_POS DELTA_HEIGHT
 
 /**
  * Software Endstops
@@ -631,113 +629,49 @@
 // @section calibrate
 
 /**
- * Choose one of the options below to enable G29 Bed Leveling. The parameters
- * and behavior of G29 will change depending on your selection.
- *
- *  If using a Probe for Z Homing, enable Z_SAFE_HOMING also!
- *
- * - AUTO_BED_LEVELING_3POINT
- *   Probe 3 arbitrary points on the bed (that aren't collinear)
- *   You specify the XY coordinates of all 3 points.
- *   The result is a single tilted plane. Best for a flat bed.
- *
- * - AUTO_BED_LEVELING_LINEAR
- *   Probe several points in a grid.
- *   You specify the rectangle and the density of sample points.
- *   The result is a single tilted plane. Best for a flat bed.
- *
- * - AUTO_BED_LEVELING_BILINEAR
- *   Probe several points in a grid.
- *   You specify the rectangle and the density of sample points.
- *   The result is a mesh, best for large or uneven beds.
- *
  * - AUTO_BED_LEVELING_UBL (Unified Bed Leveling)
  *   A comprehensive bed leveling system combining the features and benefits
  *   of other systems. UBL also includes integrated Mesh Generation, Mesh
  *   Validation and Mesh Editing systems.
  *
- * - MESH_BED_LEVELING
- *   Probe a grid manually
- *   The result is a mesh, suitable for large or uneven beds. (See BILINEAR.)
- *   For machines without a probe, Mesh Bed Leveling provides a method to perform
- *   leveling in steps so you can manually adjust the Z height at each grid-point.
- *   With an LCD controller the process is guided step-by-step.
  */
-//#define AUTO_BED_LEVELING_3POINT
-//#define AUTO_BED_LEVELING_LINEAR
-//#define AUTO_BED_LEVELING_BILINEAR
 #define AUTO_BED_LEVELING_UBL
-//#define MESH_BED_LEVELING
-
 #define RESTORE_LEVELING_AFTER_G28 // G28 leaves leveling disabled on completion.  G28 restore the prior leveling state.
 
-/**s
+/**
  * Enable detailed logging of G28, G29, M48, etc.
  * Turn on with the command 'M111 S32'.
  * NOTE: Requires a lot of PROGMEM!
  */
 #define DEBUG_LEVELING_FEATURE
 
-#if ANY(MESH_BED_LEVELING, AUTO_BED_LEVELING_BILINEAR, AUTO_BED_LEVELING_UBL)
-  // Gradually reduce leveling correction until a set height is reached,
-  // at which point movement will be level to the machine's XY plane.
-  // The height can be set with M420 Z<height>
-  #define ENABLE_LEVELING_FADE_HEIGHT
+// Gradually reduce leveling correction until a set height is reached,
+// at which point movement will be level to the machine's XY plane.
+// The height can be set with M420 Z<height>
+#define ENABLE_LEVELING_FADE_HEIGHT
 
-  // For Cartesian machines, instead of dividing moves on mesh boundaries,
-  // split up moves into short segments like a Delta. This follows the
-  // contours of the bed more closely than edge-to-edge straight moves.
-  #define SEGMENT_LEVELED_MOVES
-  #define LEVELED_SEGMENT_LENGTH 5.0 // (mm) Length of all segments (except the last one)
+// For Cartesian machines, instead of dividing moves on mesh boundaries,
+// split up moves into short segments like a Delta. This follows the
+// contours of the bed more closely than edge-to-edge straight moves.
+#define SEGMENT_LEVELED_MOVES
+#define LEVELED_SEGMENT_LENGTH 5.0 // (mm) Length of all segments (except the last one)
 
-  /**
-   * Enable the G26 Mesh Validation Pattern tool.
-   */
-  #define G26_MESH_VALIDATION
-  #if ENABLED(G26_MESH_VALIDATION)
-    #define MESH_TEST_NOZZLE_SIZE    0.4  // (mm) Diameter of primary nozzle.
-    #define MESH_TEST_LAYER_HEIGHT   0.2  // (mm) Default layer height for the G26 Mesh Validation Tool.
-    #define MESH_TEST_HOTEND_TEMP  230    // (°C) Default nozzle temperature for the G26 Mesh Validation Tool.
-    #define MESH_TEST_BED_TEMP      90    // (°C) Default bed temperature for the G26 Mesh Validation Tool.
-    #define G26_XY_FEEDRATE         20    // (mm/s) Feedrate for XY Moves for the G26 Mesh Validation Tool.
-    #define G26_RETRACT_MULTIPLIER   1.0  // G26 Q (retraction) used by default between mesh test elements.
-  #endif
-
+/**
+ * Enable the G26 Mesh Validation Pattern tool.
+ */
+#define G26_MESH_VALIDATION
+#if ENABLED(G26_MESH_VALIDATION)
+  #define MESH_TEST_NOZZLE_SIZE   0.4  // (mm) Diameter of primary nozzle.
+  #define MESH_TEST_LAYER_HEIGHT  0.2  // (mm) Default layer height for the G26 Mesh Validation Tool.
+  #define MESH_TEST_HOTEND_TEMP   215    // (°C) Default nozzle temperature for the G26 Mesh Validation Tool.
+  #define MESH_TEST_BED_TEMP      100    // (°C) Default bed temperature for the G26 Mesh Validation Tool.
+  #define G26_XY_FEEDRATE         20    // (mm/s) Feedrate for XY Moves for the G26 Mesh Validation Tool.
+  #define G26_RETRACT_MULTIPLIER   1.0  // G26 Q (retraction) used by default between mesh test elements.
 #endif
 
-#if EITHER(AUTO_BED_LEVELING_LINEAR, AUTO_BED_LEVELING_BILINEAR)
-
-  // Set the number of grid points per dimension.
-  #define GRID_MAX_POINTS_X 3
-  #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
-
-  // Probe along the Y axis, advancing X after each column
-  //#define PROBE_Y_FIRST
-
-  #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-
-    // Beyond the probed grid, continue the implied tilt?
-    // Default is to maintain the height of the nearest edge.
-    //#define EXTRAPOLATE_BEYOND_GRID
-
-    //
-    // Experimental Subdivision of the grid by Catmull-Rom method.
-    // Synthesizes intermediate points to produce a more detailed mesh.
-    //
-    //#define ABL_BILINEAR_SUBDIVISION
-    #if ENABLED(ABL_BILINEAR_SUBDIVISION)
-      // Number of subdivisions between probe points
-      #define BILINEAR_SUBDIVISIONS 3
-    #endif
-
-  #endif
-
-#elif ENABLED(AUTO_BED_LEVELING_UBL)
-
-  //===========================================================================
-  //========================= Unified Bed Leveling ============================
-  //===========================================================================
-
+//===========================================================================
+//========================= Unified Bed Leveling ============================
+//===========================================================================
   #define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
 
   #define MESH_INSET 10              // Set Mesh bounds as an inset region of the bed
@@ -747,44 +681,7 @@
   #define UBL_MESH_EDIT_MOVES_Z     // Sophisticated users prefer no movement of nozzle
   #define UBL_SAVE_ACTIVE_ON_M500   // Save the currently active mesh in the current slot on M500
 
-  //#define UBL_Z_RAISE_WHEN_OFF_MESH 2.5 // When the nozzle is off the mesh, this value is used
-                                          // as the Z-Height correction value.
-
-#elif ENABLED(MESH_BED_LEVELING)
-
-  //===========================================================================
-  //=================================== Mesh ==================================
-  //===========================================================================
-
-  #define MESH_INSET 10          // Set Mesh bounds as an inset region of the bed
-  #define GRID_MAX_POINTS_X 3    // Don't use more than 7 points per axis, implementation limited.
-  #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
-
-  //#define MESH_G28_REST_ORIGIN // After homing all axes ('G28' or 'G28 XYZ') rest Z at Z_MIN_POS
-
-#endif // BED_LEVELING
-
-/**
- * Add a bed leveling sub-menu for ABL or MBL.
- * Include a guided procedure if manual probing is enabled.
- */
-//#define LCD_BED_LEVELING
-
-#if ENABLED(LCD_BED_LEVELING)
-  #define MESH_EDIT_Z_STEP  0.025 // (mm) Step size while manually probing Z axis.
-  #define LCD_PROBE_Z_RANGE 4     // (mm) Z Range centered on Z_MIN_POS for LCD Z adjustment
-  //#define MESH_EDIT_MENU        // Add a menu to edit mesh points
-#endif
-
-// Add a menu item to move between bed corners for manual bed adjustment
-//#define LEVEL_BED_CORNERS
-
-#if ENABLED(LEVEL_BED_CORNERS)
-  #define LEVEL_CORNERS_INSET_LFRB { 30, 30, 30, 30 } // (mm) Left, Front, Right, Back insets
-  #define LEVEL_CORNERS_HEIGHT      0.0   // (mm) Z height of nozzle at leveling points
-  #define LEVEL_CORNERS_Z_HOP       4.0   // (mm) Z height of nozzle between leveling points
-  //#define LEVEL_CENTER_TOO              // Move to the center after the last corner
-#endif
+  //#define UBL_Z_RAISE_WHEN_OFF_MESH 2.5 // When the nozzle is off the mesh, this value is used as the Z-Height correction value.
 
 /**
  * Commands to execute at the end of G29 probing.
@@ -796,13 +693,6 @@
 
 // The center of the bed is at (X=0, Y=0)
 #define BED_CENTER_AT_0_0
-
-// Manually set the home position. Leave these undefined for automatic settings.
-// For DELTA this is the top-center of the Cartesian print volume.
-//#define MANUAL_X_HOME_POS 0
-//#define MANUAL_Y_HOME_POS 0
-#define MANUAL_Z_HOME_POS DELTA_HEIGHT
-
 // Validate that endstops are triggered on homing moves
 #define VALIDATE_HOMING_ENDSTOPS
 
@@ -842,14 +732,14 @@
 // @section temperature
 
 // Preheat Constants
-#define PREHEAT_1_LABEL       "PLA"
-#define PREHEAT_1_TEMP_HOTEND 205
-#define PREHEAT_1_TEMP_BED     60
-#define PREHEAT_1_FAN_SPEED   255 // Value from 0 to 255
+#define PREHEAT_1_LABEL       "ASA"
+#define PREHEAT_1_TEMP_HOTEND 215
+#define PREHEAT_1_TEMP_BED    100
+#define PREHEAT_1_FAN_SPEED   32 // Value from 0 to 255
 
-#define PREHEAT_2_LABEL       "ABS"
-#define PREHEAT_2_TEMP_HOTEND 240
-#define PREHEAT_2_TEMP_BED    100
+#define PREHEAT_2_LABEL       "PLA"
+#define PREHEAT_2_TEMP_HOTEND 205
+#define PREHEAT_2_TEMP_BED     60
 #define PREHEAT_2_FAN_SPEED   255 // Value from 0 to 255
 
 /**
@@ -1050,87 +940,6 @@
  */
 //#define SD_CHECK_AND_RETRY
 
-/**
- * LCD Menu Items
- *
- * Disable all menus and only display the Status Screen, or
- * just remove some extraneous menu items to recover space.
- */
-//#define NO_LCD_MENUS
-//#define SLIM_LCD_MENUS
-
-//
-// ENCODER SETTINGS
-//
-// This option overrides the default number of encoder pulses needed to
-// produce one step. Should be increased for high-resolution encoders.
-//
-//#define ENCODER_PULSES_PER_STEP 4
-
-//
-// Use this option to override the number of step signals required to
-// move between next/prev menu items.
-//
-//#define ENCODER_STEPS_PER_MENU_ITEM 1
-
-/**
- * Encoder Direction Options
- *
- * Test your encoder's behavior first with both options disabled.
- *
- *  Reversed Value Edit and Menu Nav? Enable REVERSE_ENCODER_DIRECTION.
- *  Reversed Menu Navigation only?    Enable REVERSE_MENU_DIRECTION.
- *  Reversed Value Editing only?      Enable BOTH options.
- */
-
-//
-// This option reverses the encoder direction everywhere.
-//
-//  Set this option if CLOCKWISE causes values to DECREASE
-//
-//#define REVERSE_ENCODER_DIRECTION
-
-//
-// This option reverses the encoder direction for navigating LCD menus.
-//
-//  If CLOCKWISE normally moves DOWN this makes it go UP.
-//  If CLOCKWISE normally moves UP this makes it go DOWN.
-//
-//#define REVERSE_MENU_DIRECTION
-
-//
-// This option reverses the encoder direction for Select Screen.
-//
-//  If CLOCKWISE normally moves LEFT this makes it go RIGHT.
-//  If CLOCKWISE normally moves RIGHT this makes it go LEFT.
-//
-//#define REVERSE_SELECT_DIRECTION
-
-//
-// Individual Axis Homing
-//
-// Add individual axis homing items (Home X, Home Y, and Home Z) to the LCD menu.
-//
-//#define INDIVIDUAL_AXIS_HOMING_MENU
-
-//
-// SPEAKER/BUZZER
-//
-// If you have a speaker that can produce tones, enable it here.
-// By default Marlin assumes you have a buzzer with a fixed frequency.
-//
-//#define SPEAKER
-
-//
-// The duration and frequency for the UI feedback sound.
-// Set these to 0 to disable audio feedback in the LCD menus.
-//
-// Note: Test audio output with the G-Code:
-//  M300 S<frequency Hz> P<duration ms>
-//
-//#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
-//#define LCD_FEEDBACK_FREQUENCY_HZ 5000
-
 //=============================================================================
 //=======================   LCD / Controller Selection  =======================
 //=========================      (Graphical LCDs)      ========================
@@ -1160,80 +969,6 @@
 #if ENABLED(EXTENSIBLE_UI)
   //#define EXTUI_LOCAL_BEEPER // Enables use of local Beeper pin with external display
 #endif
-
-//=============================================================================
-//=============================== Graphical TFTs ==============================
-//=============================================================================
-
-//
-// TFT display with optional touch screen
-// Color Marlin UI with standard menu system
-//
-//#define TFT_320x240
-//#define TFT_320x240_SPI
-//#define TFT_480x320
-//#define TFT_480x320_SPI
-
-//
-// Skip autodetect and force specific TFT driver
-// Mandatory for SPI screens with no MISO line
-// Available drivers are: ST7735, ST7789, ST7796, R61505, ILI9328, ILI9341, ILI9488
-//
-//#define TFT_DRIVER AUTO
-
-//
-// SPI display (MKS Robin Nano V2.0, MKS Gen L V2.0)
-// Upscaled 128x64 Marlin UI
-//
-//#define SPI_GRAPHICAL_TFT
-
-//
-// FSMC display (MKS Robin, Alfawise U20, JGAurora A5S, REXYZ A1, etc.)
-// Upscaled 128x64 Marlin UI
-//
-//#define FSMC_GRAPHICAL_TFT
-
-//
-// TFT LVGL UI
-//
-// Using default MKS icons and fonts from: https://git.io/JJvzK
-// Just copy the 'assets' folder from the build directory to the
-// root of your SD card, together with the compiled firmware.
-//
-//#define TFT_LVGL_UI_FSMC  // Robin nano v1.2 uses FSMC
-//#define TFT_LVGL_UI_SPI   // Robin nano v2.0 uses SPI
-
-//=============================================================================
-//============================  Other Controllers  ============================
-//=============================================================================
-
-//
-// Ender-3 v2 OEM display. A DWIN display with Rotary Encoder.
-//
-//#define DWIN_CREALITY_LCD
-
-//
-// ADS7843/XPT2046 ADC Touchscreen such as ILI9341 2.8
-//
-//#define TOUCH_SCREEN
-#if ENABLED(TOUCH_SCREEN)
-  #define BUTTON_DELAY_EDIT  50 // (ms) Button repeat delay for edit screens
-  #define BUTTON_DELAY_MENU 250 // (ms) Button repeat delay for menus
-
-  #define TOUCH_SCREEN_CALIBRATION
-
-  //#define XPT2046_X_CALIBRATION 12316
-  //#define XPT2046_Y_CALIBRATION -8981
-  //#define XPT2046_X_OFFSET        -43
-  //#define XPT2046_Y_OFFSET        257
-#endif
-
-//
-// RepRapWorld REPRAPWORLD_KEYPAD v1.1
-// https://reprapworld.com/products/electronics/ramps/keypad_v1_0_fully_assembled/
-//
-//#define REPRAPWORLD_KEYPAD
-//#define REPRAPWORLD_KEYPAD_MOVE_STEP 10.0 // (mm) Distance to move per key-press
 
 //=============================================================================
 //=============================== Extra Features ==============================
