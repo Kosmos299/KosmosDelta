@@ -27,14 +27,14 @@
  * Basic settings such as:
  * Advanced settings can be found in Configuration_adv.h
  */
-#define CONFIGURATION_H_VERSION 220522
+#define CONFIGURATION_H_VERSION 250822
 
 //===========================================================================
 //============================= DELTA Printer ===============================
 //===========================================================================
 
 // @section info
-#define STRING_CONFIG_H_AUTHOR "(BTT + Custom Delta, D.Adamik 22.05.2022)" // Author info of this build printed to the host during boot and M115
+#define STRING_CONFIG_H_AUTHOR "(BTT + TFT3.5 - Custom Delta, D.Adamik 26.08.2022)" // Author info of this build printed to the host during boot and M115
 // @section machine
 
 /**
@@ -47,7 +47,7 @@
  * BAUDRATE
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
-#define SERIAL_PORT 0     //LCD Port
+#define SERIAL_PORT 0     //USART to TFT3.5 terminal
 #define SERIAL_PORT_2 -1  //USB to PC
 #define BAUDRATE 115200
 
@@ -162,15 +162,13 @@
 // This can protect components from overheating, but NOT from shorts and failures.
 // (Use MINTEMP for thermistor short/failure protection.)
 #define HEATER_0_MAXTEMP 300
-#define BED_MAXTEMP      125
+#define BED_MAXTEMP      150
 
 
 //===========================================================================
 //====================== PID > General settings =============================
 //===========================================================================
 #define BANG_MAX 255     // Limits current to nozzle while in bang-bang mode; 255=full current
-//#define PID_DEBUG             // Sends debug data to the serial port. Use 'M303 D' to toggle activation.
-//#define PID_OPENLOOP          // Puts PID in open loop. M104/M140 sets the output power from 0 to PID_MAX
 #define PID_FUNCTIONAL_RANGE 10 // If the temperature difference between the target temperature and the actual temperatureis more than PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
 #define PID_K1 0.95      // Smoothing factor within any PID loop
 //===========================================================================
@@ -179,9 +177,10 @@
 #define PIDTEMP
 #define PID_MAX 255 // Limits current to nozzle while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
 
-#define DEFAULT_Kp 19.9
-#define DEFAULT_Ki 0.7
-#define DEFAULT_Kd 56.0
+#define DEFAULT_Kp 10.9
+#define DEFAULT_Ki 0.6
+#define DEFAULT_Kd 50.4
+
 
 //===========================================================================
 //====================== PID > Bed Temperature Control ======================
@@ -203,7 +202,7 @@
  * *** IT IS HIGHLY RECOMMENDED TO LEAVE THIS OPTION ENABLED! ***
  */
 #define PREVENT_COLD_EXTRUSION
-#define EXTRUDE_MINTEMP 170
+#define EXTRUDE_MINTEMP 100
 
 /**
  * Prevent a single extrusion longer than EXTRUDE_MAXLENGTH.
@@ -257,18 +256,15 @@
 //============================== Delta Geometry =============================
 #define DELTA_DIAGONAL_ROD 248.88 // (mm)  // Center-to-center distance of the holes in the diagonal push rods.
 #define DELTA_PRINTABLE_RADIUS 110.0    // (mm) // Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
-#define DELTA_HEIGHT 290 //279.1814           //(mm) Get this value from G33 auto calibrate // Distance between bed and nozzle Z home position
-#define DELTA_SMOOTH_ROD_OFFSET 186   // (mm) // Horizontal offset from middle of printer to smooth rod center.
-#define DELTA_EFFECTOR_OFFSET 22      // (mm) // Horizontal offset of the universal joints on the end effector.
-#define DELTA_CARRIAGE_OFFSET 24    // (mm) // Horizontal offset of the universal joints on the carriages.
+#define DELTA_HEIGHT 290.0    //279.1814           //(mm) Get this value from G33 auto calibrate // Distance between bed and nozzle Z home position
+#define DELTA_SMOOTH_ROD_OFFSET 186.0   // (mm) // Horizontal offset from middle of printer to smooth rod center.
+#define DELTA_EFFECTOR_OFFSET 22.0      // (mm) // Horizontal offset of the universal joints on the end effector.
+#define DELTA_CARRIAGE_OFFSET 24.0    // (mm) // Horizontal offset of the universal joints on the carriages.
 #define DELTA_RADIUS 140.8603 // new data from escher calibration // Horizontal distance bridged by diagonal push rods when effector is centered.
 
-#define DELTA_ENDSTOP_ADJ { 0.0, 0.0, 0.0 }
-//#define DELTA_ENDSTOP_ADJ { -0.52, -0.31, 0.0 } // Get these values from G33 auto calibrate
-#define DELTA_TOWER_ANGLE_TRIM { 0.0, 0.0, 0.0 } 
-//#define DELTA_TOWER_ANGLE_TRIM { 0.3603, 0.2658, -0.6261 } // Get these values from G33 auto calibrate
-// Delta radius and diagonal rod adjustments (mm)
-//#define DELTA_RADIUS_TRIM_TOWER { 0.0, 0.0, 0.0 }
+#define DELTA_ENDSTOP_ADJ { 0.0, 0.0, 0.0 } // Get these values from G33 auto calibrate
+#define DELTA_TOWER_ANGLE_TRIM { 0.0, 0.0, 0.0 } // Get these values from G33 auto calibrate
+//#define DELTA_RADIUS_TRIM_TOWER { 0.0, 0.0, 0.0 } // Delta radius and diagonal rod adjustments (mm)
 //#define DELTA_DIAGONAL_ROD_TRIM_TOWER { 0.0, 0.0, 0.0 }
 
 //===========================================================================
@@ -369,7 +365,7 @@
  * Override with M203
  *                                      X, Y, Z, E0
  */
-#define DEFAULT_MAX_FEEDRATE          { 500, 500, 500, 125 }
+#define DEFAULT_MAX_FEEDRATE          { 500, 500, 500, 50 }
 
 /**
  * Default Max Acceleration (change/s) change = mm/s
@@ -416,7 +412,7 @@
  *
  * See https://github.com/synthetos/TinyG/wiki/Jerk-Controlled-Motion-Explained
  */
-//#define S_CURVE_ACCELERATION
+#define S_CURVE_ACCELERATION
 
 //===========================================================================
 //============================= Z Probe Options =============================
@@ -598,6 +594,8 @@
  * RAMPS-based boards use SERVO3_PIN for the first runout sensor.
  * For other boards you may need to define FIL_RUNOUT_PIN, FIL_RUNOUT2_PIN, etc.
  */
+// 23.08.2022, DA: Printer controlled by TFT3.5 terminal, runout sensor needs to be connected to controller, not to mainboard.
+// Code left just in case
 //#define FILAMENT_RUNOUT_SENSOR
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
   #define FIL_RUNOUT_ENABLED_DEFAULT true // Enable the sensor on startup. Override with M412 followed by M500.
@@ -672,7 +670,7 @@
 //===========================================================================
 //========================= Unified Bed Leveling ============================
 //===========================================================================
-  #define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
+  //#define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh // 23.08.2022, DA: No LCD, only terminal
 
   #define MESH_INSET 10              // Set Mesh bounds as an inset region of the bed
   #define GRID_MAX_POINTS_X 5        // Don't use more than 15 points per axis, implementation limited.
@@ -715,9 +713,7 @@
 //#define DISABLE_M503        // Saves ~2700 bytes of PROGMEM. Disable for release!
 #define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save PROGMEM.
 #define EEPROM_BOOT_SILENT    // Keep M503 quiet and only give errors during first load
-#if ENABLED(EEPROM_SETTINGS)
-  #define EEPROM_AUTO_INIT  // Init EEPROM automatically on any errors.
-#endif
+#define EEPROM_AUTO_INIT  // Init EEPROM automatically on any errors.
 
 //
 // Host Keepalive
@@ -731,16 +727,18 @@
 
 // @section temperature
 
-// Preheat Constants
-#define PREHEAT_1_LABEL       "ASA"
-#define PREHEAT_1_TEMP_HOTEND 215
-#define PREHEAT_1_TEMP_BED    100
-#define PREHEAT_1_FAN_SPEED   32 // Value from 0 to 255
+// Preheat Constants // 26.08.2022 DA: preheat setting used only with SPI LCD or GCODE so may be out of date
 
-#define PREHEAT_2_LABEL       "PLA"
+#define PREHEAT_1_LABEL       "ASA"
+#define PREHEAT_1_TEMP_HOTEND 255
+#define PREHEAT_1_TEMP_BED    100
+#define PREHEAT_1_FAN_SPEED   0 // Value from 0 to 255
+
+#define PREHEAT_2_LABEL       " PLA"
 #define PREHEAT_2_TEMP_HOTEND 205
 #define PREHEAT_2_TEMP_BED     60
 #define PREHEAT_2_FAN_SPEED   255 // Value from 0 to 255
+
 
 /**
  * Nozzle Park
@@ -800,7 +798,6 @@
  *
  */
 //#define NOZZLE_CLEAN_FEATURE
-
 #if ENABLED(NOZZLE_CLEAN_FEATURE)
   // Default number of pattern repetitions
   #define NOZZLE_CLEAN_STROKES  12
@@ -923,23 +920,6 @@
  */
 #define SDSUPPORT
 
-/**
- * SD CARD: SPI SPEED
- *
- * Enable one of the following items for a slower SPI transfer speed.
- * This may be required to resolve "volume init" errors.
- */
-//#define SPI_SPEED SPI_HALF_SPEED
-//#define SPI_SPEED SPI_QUARTER_SPEED
-//#define SPI_SPEED SPI_EIGHTH_SPEED
-
-/**
- * SD CARD: ENABLE CRC
- *
- * Use CRC checks and retries on the SD communication.
- */
-//#define SD_CHECK_AND_RETRY
-
 //=============================================================================
 //=======================   LCD / Controller Selection  =======================
 //=========================      (Graphical LCDs)      ========================
@@ -958,27 +938,15 @@
 // RepRapDiscount FULL GRAPHIC Smart Controller
 // https://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
 //
-#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
 
-//
-// Third-party or vendor-customized controller interfaces.
-// Sources should be installed in 'src/lcd/extensible_ui'.
-//
-//#define EXTENSIBLE_UI
-
-#if ENABLED(EXTENSIBLE_UI)
-  //#define EXTUI_LOCAL_BEEPER // Enables use of local Beeper pin with external display
-#endif
+//TODO: check if delete? after all no marlin lcd used
+//#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER //21.08.2022 DA: BTT TFT3.5 only in Touch mode, marlin legacy disabled
 
 //=============================================================================
 //=============================== Extra Features ==============================
 //=============================================================================
 
 // @section extras
-
-// Set number of user-controlled fans. Disable to use all board-defined fans.
-// :[1,2,3,4,5,6,7,8]
-//#define NUM_M106_FANS 1
 
 // Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
@@ -1000,17 +968,6 @@
 // some of the PWM cycles are stretched so on average the desired
 // duty cycle is attained.
 //#define SOFT_PWM_DITHER
-
-// Temperature status LEDs that display the hotend and bed temperature.
-// If all hotends, bed temperature, and target temperature are under 54C
-// then the BLUE led is on. Otherwise the RED led is on. (1C hysteresis)
-//#define TEMP_STAT_LEDS
-
-// SkeinForge sends the wrong arc G-codes when using Arc Point as fillet procedure
-//#define SF_ARC_FIX
-
-// Support for the BariCUDA Paste Extruder
-//#define BARICUDA
 
 // Support for BlinkM/CyzRgb
 //#define BLINKM
@@ -1053,22 +1010,22 @@
   //#define RGB_LED_W_PIN -1
 #endif
 
-// Support for Adafruit NeoPixel LED driver
-//#define NEOPIXEL_LED
+// Support for Adafruit NeoPixel LED driver. Control: M150 S0
+//21.08.2022, DA: LED driving pins declared in pins.h TODO: finish it
+#define NEOPIXEL_LED                //Neopixels on effector. Unpowered socket
 #if ENABLED(NEOPIXEL_LED)
-  #define NEOPIXEL_TYPE   NEO_GRBW // NEO_GRBW / NEO_GRB - four/three channel driver type (defined in Adafruit_NeoPixel.h)
-  #define NEOPIXEL_PIN     4       // LED driving pin
-  //#define NEOPIXEL2_TYPE NEOPIXEL_TYPE
-  //#define NEOPIXEL2_PIN    5
-  #define NEOPIXEL_PIXELS 30       // Number of LEDs in the strip. (Longest strip when NEOPIXEL2_SEPARATE is disabled.)
-  #define NEOPIXEL_IS_SEQUENTIAL   // Sequential display for temperature change - LED by LED. Disable to change all LEDs at once.
-  #define NEOPIXEL_BRIGHTNESS 127  // Initial brightness (0-255)
-  //#define NEOPIXEL_STARTUP_TEST  // Cycle through colors at startup
+  #define NEOPIXEL_TYPE   NEO_GRBW  // NEO_GRBW / NEO_GRB - four/three channel driver type (defined in Adafruit_NeoPixel.h)
+  #define NEOPIXEL_PIXELS 15        // Number of LEDs in the strip. (Longest strip when NEOPIXEL2_SEPARATE is disabled.)
+  #define NEOPIXEL_BRIGHTNESS 127   // Initial brightness (0-255)
+  #define NEOPIXEL_STARTUP_TEST     // Cycle through colors at startup
+
+  //#define NEOPIXEL_IS_SEQUENTIAL  // Sequential display for temperature change - LED by LED. Disable to change all LEDs at once.
 
   // Support for second Adafruit NeoPixel LED driver controlled with M150 S1 ...
-  //#define NEOPIXEL2_SEPARATE
+  #define NEOPIXEL2_SEPARATE      //Neopixels on frame. Powered socket
   #if ENABLED(NEOPIXEL2_SEPARATE)
-    #define NEOPIXEL2_PIXELS      15  // Number of LEDs in the second strip
+    #define NEOPIXEL2_TYPE NEO_GRBW
+    #define NEOPIXEL2_PIXELS      20  // Number of LEDs in the second strip
     #define NEOPIXEL2_BRIGHTNESS 127  // Initial brightness (0-255)
     #define NEOPIXEL2_STARTUP_TEST    // Cycle through colors at startup
   #else
@@ -1094,28 +1051,3 @@
 #if ANY(BLINKM, RGB_LED, RGBW_LED, PCA9632, PCA9533, NEOPIXEL_LED)
   #define PRINTER_EVENT_LEDS
 #endif
-
-/**
- * R/C SERVO support
- * Sponsored by TrinityLabs, Reworked by codexmas
- */
-
-/**
- * Number of servos
- *
- * For some servo-related options NUM_SERVOS will be set automatically.
- * Set this manually if there are extra servos needing manual control.
- * Leave undefined or set to 0 to entirely disable the servo subsystem.
- */
-//#define NUM_SERVOS 3 // Servo index starts with 0 for M280 command
-
-// (ms) Delay  before the next move will start, to give the servo time to reach its target angle.
-// 300ms is a good value but you can try less delay.
-// If the servo can't reach the requested position, increase it.
-#define SERVO_DELAY { 300 }
-
-// Only power servos during movement, otherwise leave off to prevent jitter
-//#define DEACTIVATE_SERVOS_AFTER_MOVE
-
-// Allow servo angle to be edited and saved to EEPROM
-//#define EDITABLE_SERVO_ANGLES

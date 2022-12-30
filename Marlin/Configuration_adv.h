@@ -70,12 +70,10 @@
 #if ENABLED(THERMAL_PROTECTION_HOTENDS)
   #define THERMAL_PROTECTION_PERIOD       60  // Seconds
   #define THERMAL_PROTECTION_HYSTERESIS   10  // Degrees Celsius
-
   //#define ADAPTIVE_FAN_SLOWING              // Slow part cooling fan if temperature drops
   #if BOTH(ADAPTIVE_FAN_SLOWING, PIDTEMP)
     //#define NO_FAN_SLOWING_IN_PID_TUNING    // Don't slow fan speed during M303
   #endif
-
   /**
    * Whenever an M104, M109, or M303 increases the target temperature, the
    * firmware will wait for the WATCH_TEMP_PERIOD to expire. If the temperature
@@ -98,7 +96,6 @@
 #if ENABLED(THERMAL_PROTECTION_BED)
   #define THERMAL_PROTECTION_BED_PERIOD        60 // Seconds
   #define THERMAL_PROTECTION_BED_HYSTERESIS    10 // Degrees Celsius
-
   /**
    * As described above, except for the bed (M140/M190/M303).
    */
@@ -112,7 +109,6 @@
 #if ENABLED(THERMAL_PROTECTION_CHAMBER)
   #define THERMAL_PROTECTION_CHAMBER_PERIOD    20 // Seconds
   #define THERMAL_PROTECTION_CHAMBER_HYSTERESIS 2 // Degrees Celsius
-
   /**
    * Heated chamber watch settings (M141/M191).
    */
@@ -133,7 +129,8 @@
  * Enable Autotemp Mode with M104/M109 F<factor> S<mintemp> B<maxtemp>.
  * Disable by sending M104/M109 with no F parameter (or F0 with AUTOTEMP_PROPORTIONAL).
  */
-#define AUTOTEMP
+// TODO: this feature works wonky, disabled temporarily pending testing
+//#define AUTOTEMP
 #if ENABLED(AUTOTEMP)
   #define AUTOTEMP_OLDWEIGHT    0.98
   // Turn on AUTOTEMP on M104/M109 by default using proportions set here
@@ -161,10 +158,12 @@
 
 // Calibration for AD595 / AD8495 sensor to adjust temperature measurements.
 // The final temperature is calculated as (measuredTemp * GAIN) + OFFSET.
-#define TEMP_SENSOR_AD595_OFFSET  0.0
+#define TEMP_SENSOR_AD595_OFFSET  0.0 //TODO: Delete?
 #define TEMP_SENSOR_AD595_GAIN    1.0
 #define TEMP_SENSOR_AD8495_OFFSET 0.0
 #define TEMP_SENSOR_AD8495_GAIN   1.0
+
+
 
 /**
  * FAST PWM FAN Settings
@@ -188,7 +187,7 @@
  *   PWM on pin OC2A. Only use this option if you don't need PWM on 0C2A. (Check your schematic.)
  *   USE_OCR2A_AS_TOP sacrifices duty cycle control resolution to achieve this broader range of frequencies.
  */
-#if ENABLED(FAST_PWM_FAN)
+#if ENABLED(FAST_PWM_FAN) //TODO: Delete?
   //#define FAST_PWM_FAN_FREQUENCY 31400
   //#define USE_OCR2A_AS_TOP
 #endif
@@ -231,7 +230,7 @@
 /**
  * M355 Case Light on-off / brightness
  */
-//#define CASE_LIGHT_ENABLE
+//#define CASE_LIGHT_ENABLE TODO: how doeas it interact with event leds?
 #if ENABLED(CASE_LIGHT_ENABLE)
   //#define CASE_LIGHT_PIN 4                  // Override the default pin if needed
   #define INVERT_CASE_LIGHT false             // Set true if Case Light is ON when pin is LOW
@@ -249,9 +248,6 @@
 
 // @section extras
 
-//
-// For Z set the number of stepper drivers
-//
 #define NUM_Z_STEPPER_DRIVERS 1   // (1-4) Z options change based on how many
 
 // @section homing
@@ -279,13 +275,10 @@
  * The Deactive Time can be overridden with M18 and M84. Set to 0 for No Timeout.
  */
 #define DEFAULT_STEPPER_DEACTIVE_TIME 120
-#define DISABLE_INACTIVE_X true
-#define DISABLE_INACTIVE_Y true
-#define DISABLE_INACTIVE_Z true  // Set 'false' if the nozzle could fall onto your printed part!
+#define DISABLE_INACTIVE_X false  // Delta: Set 'false' if the nozzle could fall onto your printed part!
+#define DISABLE_INACTIVE_Y false  // Delta: Set 'false' if the nozzle could fall onto your printed part!
+#define DISABLE_INACTIVE_Z false  // Delat: Set 'false' if the nozzle could fall onto your printed part!
 #define DISABLE_INACTIVE_E true
-
-// If the Nozzle or Bed falls when the Z stepper is disabled, set its resting position here.
-//#define Z_AFTER_DEACTIVATE Z_HOME_POS
 
 //#define HOME_AFTER_DEACTIVATE  // Require rehoming after steppers are deactivated
 
@@ -299,9 +292,7 @@
 // Slow down the machine if the lookahead buffer is (by default) half full.
 // Increase the slowdown divisor for larger buffer sizes.
 #define SLOWDOWN
-#if ENABLED(SLOWDOWN)
-  #define SLOWDOWN_DIVISOR 2
-#endif
+#define SLOWDOWN_DIVISOR 2
 
 // Minimum planner junction speed. Sets the default minimum speed the planner plans for at the end
 // of the buffer and all stops. This should not be much greater than zero and should only be changed
@@ -309,7 +300,7 @@
 #define MINIMUM_PLANNER_SPEED 0.05 // (mm/s)
 
 //
-// Backlash Compensation
+// Backlash Compensation TODO: do I need it?
 // Adds extra movement to axes on direction-changes to account for backlash.
 //
 //#define BACKLASH_COMPENSATION
@@ -342,79 +333,12 @@
 #endif
 
 /**
- * Automatic backlash, position and hotend offset calibration
- *
- * Enable G425 to run automatic calibration using an electrically-
- * conductive cube, bolt, or washer mounted on the bed.
- *
- * G425 uses the probe to touch the top and sides of the calibration object
- * on the bed and measures and/or correct positional offsets, axis backlash
- * and hotend offsets.
- *
- * Note: HOTEND_OFFSET and CALIBRATION_OBJECT_CENTER must be set to within
- *       ±5mm of true values for G425 to succeed.
- */
-//#define CALIBRATION_GCODE
-#if ENABLED(CALIBRATION_GCODE)
-
-  //#define CALIBRATION_SCRIPT_PRE  "M117 Starting Auto-Calibration\nT0\nG28\nG12\nM117 Calibrating..."
-  //#define CALIBRATION_SCRIPT_POST "M500\nM117 Calibration data saved"
-
-  #define CALIBRATION_MEASUREMENT_RESOLUTION     0.01 // mm
-
-  #define CALIBRATION_FEEDRATE_SLOW             60    // mm/min
-  #define CALIBRATION_FEEDRATE_FAST           1200    // mm/min
-  #define CALIBRATION_FEEDRATE_TRAVEL         3000    // mm/min
-
-  // The following parameters refer to the conical section of the nozzle tip.
-  #define CALIBRATION_NOZZLE_TIP_HEIGHT          1.0  // mm
-  #define CALIBRATION_NOZZLE_OUTER_DIAMETER      2.0  // mm
-
-  // Uncomment to enable reporting (required for "G425 V", but consumes PROGMEM).
-  //#define CALIBRATION_REPORTING
-
-  // The true location and dimension the cube/bolt/washer on the bed.
-  #define CALIBRATION_OBJECT_CENTER     { 264.0, -22.0,  -2.0 } // mm
-  #define CALIBRATION_OBJECT_DIMENSIONS {  10.0,  10.0,  10.0 } // mm
-
-  // Comment out any sides which are unreachable by the probe. For best
-  // auto-calibration results, all sides must be reachable.
-  #define CALIBRATION_MEASURE_RIGHT
-  #define CALIBRATION_MEASURE_FRONT
-  #define CALIBRATION_MEASURE_LEFT
-  #define CALIBRATION_MEASURE_BACK
-
-  // Probing at the exact top center only works if the center is flat. If
-  // probing on a screwhead or hollow washer, probe near the edges.
-  //#define CALIBRATION_MEASURE_AT_TOP_EDGES
-
-  // Define the pin to read during calibration
-  #ifndef CALIBRATION_PIN
-    //#define CALIBRATION_PIN -1            // Define here to override the default pin
-    #define CALIBRATION_PIN_INVERTING false // Set to true to invert the custom pin
-    //#define CALIBRATION_PIN_PULLDOWN
-    #define CALIBRATION_PIN_PULLUP
-  #endif
-#endif
-
-/**
  * Adaptive Step Smoothing increases the resolution of multi-axis moves, particularly at step frequencies
  * below 1kHz (for AVR) or 10kHz (for ARM), where aliasing between axes in multi-axis moves causes audible
  * vibration and surface artifacts. The algorithm adapts to provide the best possible step smoothing at the
  * lowest stepping frequencies.
  */
 //#define ADAPTIVE_STEP_SMOOTHING
-
-/**
- * Custom Microstepping
- * Override as-needed for your setup. Up to 3 MS pins are supported.
- */
-//#define MICROSTEP1 LOW,LOW,LOW
-//#define MICROSTEP2 HIGH,LOW,LOW
-//#define MICROSTEP4 LOW,HIGH,LOW
-//#define MICROSTEP8 HIGH,HIGH,LOW
-//#define MICROSTEP16 LOW,LOW,HIGH
-//#define MICROSTEP32 HIGH,LOW,HIGH
 
 // Microstep settings (Requires a board with pins named X_MS1, X_MS2, etc.)
 #define MICROSTEP_MODES { 16, 16, 16, 16, 16, 16 } // [1,2,4,8,16]
@@ -448,7 +372,7 @@
   #define FEEDRATE_CHANGE_BEEP_FREQUENCY 440
 #endif
 
-#if HAS_LCD_MENU
+#if HAS_LCD_MENU //TODO: possibly remove entire block?
 
   // Include a page of printer information in the LCD Main Menu
   //#define LCD_INFO_MENU
@@ -536,7 +460,7 @@
 
   #define SD_PROCEDURE_DEPTH 1              // Increase if you need more nested M32 calls
 
-  #define SD_FINISHED_STEPPERRELEASE true   // Disable steppers when SD Print is finished
+  #define SD_FINISHED_STEPPERRELEASE false   // Disable steppers when SD Print is finished
   #define SD_FINISHED_RELEASECOMMAND "M84"  // Use "M84XYE" to keep Z enabled so your bed stays in place
 
   // Reverse SD sort to show "more recent" files first, according to the card's FAT.
@@ -544,10 +468,9 @@
   #define SDCARD_RATHERRECENTFIRST
 
   #define SD_MENU_CONFIRM_START             // Confirm the selected SD file before printing
-
   //#define MENU_ADDAUTOSTART               // Add a menu option to run auto#.g files
 
-  #define EVENT_GCODE_SD_ABORT "G28XY"      // G-code to run on SD Abort Print (e.g., "G28XY" or "G27")
+  #define EVENT_GCODE_SD_ABORT "G28"      // G-code to run on SD Abort Print (e.g., "G28XY" or "G27")
 
   #if ENABLED(PRINTER_EVENT_LEDS)
     #define PE_LEDS_COMPLETED_TIME  (30*60) // (seconds) Time to keep the LED "done" color before restoring normal illumination
@@ -561,7 +484,7 @@
    * an option on the LCD screen to continue the print from the last-known
    * point in the file.
    */
-  //#define POWER_LOSS_RECOVERY
+  //#define POWER_LOSS_RECOVERY TODO: perhaps delete it?
   #if ENABLED(POWER_LOSS_RECOVERY)
     #define PLR_ENABLED_DEFAULT   false // Power Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
     //#define BACKUP_POWER_SUPPLY       // Backup power / UPS to move the steppers on power loss
@@ -616,7 +539,7 @@
   #endif
 
   // This allows hosts to request long names for files and folders with M33
-  //#define LONG_FILENAME_HOST_SUPPORT
+  #define LONG_FILENAME_HOST_SUPPORT
 
   // Enable this option to scroll long filenames in the SD card menu
   //#define SCROLL_LONG_FILENAMES
@@ -641,39 +564,7 @@
   /**
    * Auto-report SdCard status with M27 S<seconds>
    */
-  //#define AUTO_REPORT_SD_STATUS
-
-  /**
-   * Support for USB thumb drives using an Arduino USB Host Shield or
-   * equivalent MAX3421E breakout board. The USB thumb drive will appear
-   * to Marlin as an SD card.
-   *
-   * The MAX3421E can be assigned the same pins as the SD card reader, with
-   * the following pin mapping:
-   *
-   *    SCLK, MOSI, MISO --> SCLK, MOSI, MISO
-   *    INT              --> SD_DETECT_PIN [1]
-   *    SS               --> SDSS
-   *
-   * [1] On AVR an interrupt-capable pin is best for UHS3 compatibility.
-   */
-  //#define USB_FLASH_DRIVE_SUPPORT
-  #if ENABLED(USB_FLASH_DRIVE_SUPPORT)
-    #define USB_CS_PIN    SDSS
-    #define USB_INTR_PIN  SD_DETECT_PIN
-
-    /**
-     * USB Host Shield Library
-     *
-     * - UHS2 uses no interrupts and has been production-tested
-     *   on a LulzBot TAZ Pro with a 32-bit Archim board.
-     *
-     * - UHS3 is newer code with better USB compatibility. But it
-     *   is less tested and is known to interfere with Servos.
-     *   [1] This requires USB_INTR_PIN to be interrupt-capable.
-     */
-    //#define USE_UHS3_USB
-  #endif
+  #define AUTO_REPORT_SD_STATUS
 
   // Add an optimized binary file transfer mode, initiated with 'M28 B1'
   //#define BINARY_FILE_TRANSFER
@@ -687,7 +578,7 @@
    *
    * :[ 'LCD', 'ONBOARD', 'CUSTOM_CABLE' ]
    */
-  //#define SDCARD_CONNECTION LCD
+  #define SDCARD_CONNECTION ONBOARD
 
 #endif // SDSUPPORT
 
@@ -926,9 +817,8 @@
   #define BABYSTEP_DISPLAY_TOTAL          // Display total babysteps since last G28
 
   #define BABYSTEP_ZPROBE_OFFSET          // Combine M851 Z and Babystepping
-  #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
-    #define BABYSTEP_ZPROBE_GFX_OVERLAY   // Enable graphical overlay on Z-offset editor
-  #endif
+  //#define BABYSTEP_ZPROBE_GFX_OVERLAY   // Enable graphical overlay on Z-offset editor // 23.08.2022, DA: No LCD, only terminal
+
 #endif
 
 // @section extruder
@@ -1275,7 +1165,7 @@
  * Note that M207 / M208 / M209 settings are saved to EEPROM.
  *
  */
-//#define FWRETRACT
+#define FWRETRACT
 #if ENABLED(FWRETRACT)
   #define FWRETRACT_AUTORETRACT           // Override slicer retractions
   #if ENABLED(FWRETRACT_AUTORETRACT)
@@ -1290,9 +1180,6 @@
   #define RETRACT_RECOVER_LENGTH_SWAP 0   // (mm) Default additional swap recover length (added to retract length on recover from toolchange)
   #define RETRACT_RECOVER_FEEDRATE 8      // (mm/s) Default feedrate for recovering from retraction
   #define RETRACT_RECOVER_FEEDRATE_SWAP 8 // (mm/s) Default feedrate for recovering from swap retraction
-  #if ENABLED(MIXING_EXTRUDER)
-    //#define RETRACT_SYNC_MIXING         // Retract and restore all mixing steppers simultaneously
-  #endif
 #endif
 
 /**
