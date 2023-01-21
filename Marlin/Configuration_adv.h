@@ -31,7 +31,7 @@
  * Basic settings can be found in Configuration.h
  *
  */
-#define CONFIGURATION_ADV_H_VERSION 220522
+#define CONFIGURATION_ADV_H_VERSION 040922
 
 // @section temperature
 
@@ -67,7 +67,7 @@
  * If you get false positives for "Thermal Runaway", increase
  * THERMAL_PROTECTION_HYSTERESIS and/or THERMAL_PROTECTION_PERIOD
  */
-#if ENABLED(THERMAL_PROTECTION_HOTENDS)
+#if ENABLED(THERMAL_PROTECTION_HOTENDS) //04.09.2022 DA: incesed 60->90 10->20 casue unstable controll of hotend, TODO: investigate
   #define THERMAL_PROTECTION_PERIOD       60  // Seconds
   #define THERMAL_PROTECTION_HYSTERESIS   10  // Degrees Celsius
   //#define ADAPTIVE_FAN_SLOWING              // Slow part cooling fan if temperature drops
@@ -86,7 +86,7 @@
    * and/or decrease WATCH_TEMP_INCREASE. WATCH_TEMP_INCREASE should not be set
    * below 2.
    */
-  #define WATCH_TEMP_PERIOD 60                // Seconds
+  #define WATCH_TEMP_PERIOD 180                // Seconds //04.09.2022 DA: incesed 60->180 casue unstable controll of hotend, TODO: investigate
   #define WATCH_TEMP_INCREASE 2               // Degrees Celsius
 #endif
 
@@ -153,17 +153,6 @@
   #define HOTEND_IDLE_NOZZLE_TARGET   0     // (°C) Safe temperature for the nozzle after timeout
   #define HOTEND_IDLE_BED_TARGET      0     // (°C) Safe temperature for the bed after timeout
 #endif
-
-// @section temperature
-
-// Calibration for AD595 / AD8495 sensor to adjust temperature measurements.
-// The final temperature is calculated as (measuredTemp * GAIN) + OFFSET.
-#define TEMP_SENSOR_AD595_OFFSET  0.0 //TODO: Delete?
-#define TEMP_SENSOR_AD595_GAIN    1.0
-#define TEMP_SENSOR_AD8495_OFFSET 0.0
-#define TEMP_SENSOR_AD8495_GAIN   1.0
-
-
 
 /**
  * FAST PWM FAN Settings
@@ -372,45 +361,6 @@
   #define FEEDRATE_CHANGE_BEEP_FREQUENCY 440
 #endif
 
-#if HAS_LCD_MENU //TODO: possibly remove entire block?
-
-  // Include a page of printer information in the LCD Main Menu
-  //#define LCD_INFO_MENU
-  #if ENABLED(LCD_INFO_MENU)
-    //#define LCD_PRINTER_INFO_IS_BOOTSCREEN // Show bootscreen(s) instead of Printer Info pages
-  #endif
-
-  // BACK menu items keep the highlight at the top
-  //#define TURBO_BACK_MENU_ITEM
-
-  /**
-   * LED Control Menu
-   * Add LED Control to the LCD menu
-   */
-  //#define LED_CONTROL_MENU
-  #if ENABLED(LED_CONTROL_MENU)
-    #define LED_COLOR_PRESETS                 // Enable the Preset Color menu option
-    //#define NEO2_COLOR_PRESETS              // Enable a second NeoPixel Preset Color menu option
-    #if ENABLED(LED_COLOR_PRESETS)
-      #define LED_USER_PRESET_RED        255  // User defined RED value
-      #define LED_USER_PRESET_GREEN      128  // User defined GREEN value
-      #define LED_USER_PRESET_BLUE         0  // User defined BLUE value
-      #define LED_USER_PRESET_WHITE      255  // User defined WHITE value
-      #define LED_USER_PRESET_BRIGHTNESS 255  // User defined intensity
-      //#define LED_USER_PRESET_STARTUP       // Have the printer display the user preset color on startup
-    #endif
-    #if ENABLED(NEO2_COLOR_PRESETS)
-      #define NEO2_USER_PRESET_RED        255  // User defined RED value
-      #define NEO2_USER_PRESET_GREEN      128  // User defined GREEN value
-      #define NEO2_USER_PRESET_BLUE         0  // User defined BLUE value
-      #define NEO2_USER_PRESET_WHITE      255  // User defined WHITE value
-      #define NEO2_USER_PRESET_BRIGHTNESS 255  // User defined intensity
-      //#define NEO2_USER_PRESET_STARTUP       // Have the printer display the user preset color on startup for the second strip
-    #endif
-  #endif
-
-#endif // HAS_LCD_MENU
-
 // Scroll a longer status message into view
 //#define STATUS_MESSAGE_SCROLLING
 
@@ -428,26 +378,6 @@
 
 #if ENABLED(SHOW_BOOTSCREEN)
   #define BOOTSCREEN_TIMEOUT 4000        // (ms) Total Duration to display the boot screen(s)
-#endif
-
-#if HAS_GRAPHICAL_LCD && EITHER(SDSUPPORT, LCD_SET_PROGRESS_MANUALLY)
-  //#define PRINT_PROGRESS_SHOW_DECIMALS // Show progress with decimal digits
-  //#define SHOW_REMAINING_TIME          // Display estimated time to completion
-  #if ENABLED(SHOW_REMAINING_TIME)
-    //#define USE_M73_REMAINING_TIME     // Use remaining time from M73 command instead of estimation
-    //#define ROTATE_PROGRESS_DISPLAY    // Display (P)rogress, (E)lapsed, and (R)emaining time
-  #endif
-#endif
-
-#if HAS_CHARACTER_LCD && EITHER(SDSUPPORT, LCD_SET_PROGRESS_MANUALLY)
-  //#define LCD_PROGRESS_BAR              // Show a progress bar on HD44780 LCDs for SD printing
-  #if ENABLED(LCD_PROGRESS_BAR)
-    #define PROGRESS_BAR_BAR_TIME 2000    // (ms) Amount of time to show the bar
-    #define PROGRESS_BAR_MSG_TIME 3000    // (ms) Amount of time to show the status message
-    #define PROGRESS_MSG_EXPIRE   0       // (ms) Amount of time to retain the status message (0=forever)
-    //#define PROGRESS_MSG_ONCE           // Show the message for MSG_TIME then clear it
-    //#define LCD_PROGRESS_BAR_TEST       // Add a menu item to test the progress bar
-  #endif
 #endif
 
 #if ENABLED(SDSUPPORT)
@@ -484,7 +414,7 @@
    * an option on the LCD screen to continue the print from the last-known
    * point in the file.
    */
-  //#define POWER_LOSS_RECOVERY TODO: perhaps delete it?
+  //#define POWER_LOSS_RECOVERY TODO: investigate possible extension
   #if ENABLED(POWER_LOSS_RECOVERY)
     #define PLR_ENABLED_DEFAULT   false // Power Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
     //#define BACKUP_POWER_SUPPLY       // Backup power / UPS to move the steppers on power loss
@@ -588,180 +518,6 @@
  */
 //#define NO_SD_HOST_DRIVE   // Disable SD Card access over USB (for security).
 
-/**
- * Additional options for Graphical Displays
- *
- * Use the optimizations here to improve printing performance,
- * which can be adversely affected by graphical display drawing,
- * especially when doing several short moves, and when printing
- * on DELTA and SCARA machines.
- *
- * Some of these options may result in the display lagging behind
- * controller events, as there is a trade-off between reliable
- * printing performance versus fast display updates.
- */
-#if HAS_GRAPHICAL_LCD
-  // Show SD percentage next to the progress bar
-  //#define DOGM_SD_PERCENT
-
-  // Save many cycles by drawing a hollow frame or no frame on the Info Screen
-  //#define XYZ_NO_FRAME
-  #define XYZ_HOLLOW_FRAME
-
-  // Enable to save many cycles by drawing a hollow frame on Menu Screens
-  #define MENU_HOLLOW_FRAME
-
-  // A bigger font is available for edit items. Costs 3120 bytes of PROGMEM.
-  // Western only. Not available for Cyrillic, Kana, Turkish, Greek, or Chinese.
-  //#define USE_BIG_EDIT_FONT
-
-  // A smaller font may be used on the Info Screen. Costs 2300 bytes of PROGMEM.
-  // Western only. Not available for Cyrillic, Kana, Turkish, Greek, or Chinese.
-  //#define USE_SMALL_INFOFONT
-
-  // Swap the CW/CCW indicators in the graphics overlay
-  //#define OVERLAY_GFX_REVERSE
-
-  /**
-   * ST7920-based LCDs can emulate a 16 x 4 character display using
-   * the ST7920 character-generator for very fast screen updates.
-   * Enable LIGHTWEIGHT_UI to use this special display mode.
-   *
-   * Since LIGHTWEIGHT_UI has limited space, the position and status
-   * message occupy the same line. Set STATUS_EXPIRE_SECONDS to the
-   * length of time to display the status message before clearing.
-   *
-   * Set STATUS_EXPIRE_SECONDS to zero to never clear the status.
-   * This will prevent position updates from being displayed.
-   */
-  #if ENABLED(U8GLIB_ST7920)
-    // Enable this option and reduce the value to optimize screen updates.
-    // The normal delay is 10µs. Use the lowest value that still gives a reliable display.
-    //#define DOGM_SPI_DELAY_US 5
-
-    //#define LIGHTWEIGHT_UI
-    #if ENABLED(LIGHTWEIGHT_UI)
-      #define STATUS_EXPIRE_SECONDS 20
-    #endif
-  #endif
-
-  /**
-   * Status (Info) Screen customizations
-   * These options may affect code size and screen render time.
-   * Custom status screens can forcibly override these settings.
-   */
-  //#define STATUS_COMBINE_HEATERS    // Use combined heater images instead of separate ones
-  //#define STATUS_HOTEND_NUMBERLESS  // Use plain hotend icons instead of numbered ones (with 2+ hotends)
-  #define STATUS_HOTEND_INVERTED      // Show solid nozzle bitmaps when heating (Requires STATUS_HOTEND_ANIM)
-  #define STATUS_HOTEND_ANIM          // Use a second bitmap to indicate hotend heating
-  #define STATUS_BED_ANIM             // Use a second bitmap to indicate bed heating
-  #define STATUS_CHAMBER_ANIM         // Use a second bitmap to indicate chamber heating
-  //#define STATUS_CUTTER_ANIM        // Use a second bitmap to indicate spindle / laser active
-  //#define STATUS_ALT_BED_BITMAP     // Use the alternative bed bitmap
-  //#define STATUS_ALT_FAN_BITMAP     // Use the alternative fan bitmap
-  //#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames
-  //#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
-  //#define BOOT_MARLIN_LOGO_SMALL    // Show a smaller Marlin logo on the Boot Screen (saving 399 bytes of flash)
-  //#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~‭3260 (or ~940) bytes of PROGMEM.
-
-  // Frivolous Game Options
-  //#define MARLIN_BRICKOUT
-  //#define MARLIN_INVADERS
-  //#define MARLIN_SNAKE
-  //#define GAMES_EASTER_EGG          // Add extra blank lines above the "Games" sub-menu
-
-#endif // HAS_GRAPHICAL_LCD
-
-//
-// Touch UI for the FTDI Embedded Video Engine (EVE)
-//
-#if ENABLED(TOUCH_UI_FTDI_EVE)
-  // Display board used
-  //#define LCD_FTDI_VM800B35A        // FTDI 3.5" with FT800 (320x240)
-  //#define LCD_4DSYSTEMS_4DLCD_FT843 // 4D Systems 4.3" (480x272)
-  //#define LCD_HAOYU_FT800CB         // Haoyu with 4.3" or 5" (480x272)
-  //#define LCD_HAOYU_FT810CB         // Haoyu with 5" (800x480)
-  //#define LCD_ALEPHOBJECTS_CLCD_UI  // Aleph Objects Color LCD UI
-  //#define LCD_FYSETC_TFT81050       // FYSETC with 5" (800x480)
-
-  // Correct the resolution if not using the stock TFT panel.
-  //#define TOUCH_UI_320x240
-  //#define TOUCH_UI_480x272
-  //#define TOUCH_UI_800x480
-
-  // Mappings for boards with a standard RepRapDiscount Display connector
-  //#define AO_EXP1_PINMAP      // AlephObjects CLCD UI EXP1 mapping
-  //#define AO_EXP2_PINMAP      // AlephObjects CLCD UI EXP2 mapping
-  //#define CR10_TFT_PINMAP     // Rudolph Riedel's CR10 pin mapping
-  //#define S6_TFT_PINMAP       // FYSETC S6 pin mapping
-  //#define F6_TFT_PINMAP       // FYSETC F6 pin mapping
-
-  //#define OTHER_PIN_LAYOUT  // Define pins manually below
-  #if ENABLED(OTHER_PIN_LAYOUT)
-    // Pins for CS and MOD_RESET (PD) must be chosen
-    #define CLCD_MOD_RESET  9
-    #define CLCD_SPI_CS    10
-
-    // If using software SPI, specify pins for SCLK, MOSI, MISO
-    //#define CLCD_USE_SOFT_SPI
-    #if ENABLED(CLCD_USE_SOFT_SPI)
-      #define CLCD_SOFT_SPI_MOSI 11
-      #define CLCD_SOFT_SPI_MISO 12
-      #define CLCD_SOFT_SPI_SCLK 13
-    #endif
-  #endif
-
-  // Display Orientation. An inverted (i.e. upside-down) display
-  // is supported on the FT800. The FT810 and beyond also support
-  // portrait and mirrored orientations.
-  //#define TOUCH_UI_INVERTED
-  //#define TOUCH_UI_PORTRAIT
-  //#define TOUCH_UI_MIRRORED
-
-  // UTF8 processing and rendering.
-  // Unsupported characters are shown as '?'.
-  //#define TOUCH_UI_USE_UTF8
-  #if ENABLED(TOUCH_UI_USE_UTF8)
-    // Western accents support. These accented characters use
-    // combined bitmaps and require relatively little storage.
-    #define TOUCH_UI_UTF8_WESTERN_CHARSET
-    #if ENABLED(TOUCH_UI_UTF8_WESTERN_CHARSET)
-      // Additional character groups. These characters require
-      // full bitmaps and take up considerable storage:
-      //#define TOUCH_UI_UTF8_SUPERSCRIPTS  // ¹ ² ³
-      //#define TOUCH_UI_UTF8_COPYRIGHT     // © ®
-      //#define TOUCH_UI_UTF8_GERMANIC      // ß
-      //#define TOUCH_UI_UTF8_SCANDINAVIAN  // Æ Ð Ø Þ æ ð ø þ
-      //#define TOUCH_UI_UTF8_PUNCTUATION   // « » ¿ ¡
-      //#define TOUCH_UI_UTF8_CURRENCY      // ¢ £ ¤ ¥
-      //#define TOUCH_UI_UTF8_ORDINALS      // º ª
-      //#define TOUCH_UI_UTF8_MATHEMATICS   // ± × ÷
-      //#define TOUCH_UI_UTF8_FRACTIONS     // ¼ ½ ¾
-      //#define TOUCH_UI_UTF8_SYMBOLS       // µ ¶ ¦ § ¬
-    #endif
-  #endif
-
-  // Use a smaller font when labels don't fit buttons
-  #define TOUCH_UI_FIT_TEXT
-
-  // Allow language selection from menu at run-time (otherwise use LCD_LANGUAGE)
-  //#define LCD_LANGUAGE_1 en
-  //#define LCD_LANGUAGE_2 fr
-  //#define LCD_LANGUAGE_3 de
-  //#define LCD_LANGUAGE_4 es
-  //#define LCD_LANGUAGE_5 it
-
-  // Use a numeric passcode for "Screen lock" keypad.
-  // (recommended for smaller displays)
-  //#define TOUCH_UI_PASSCODE
-
-  // Output extra debug info for Touch UI events
-  //#define TOUCH_UI_DEBUG
-
-  // Developer menu (accessed by touching "About Printer" copyright text)
-  //#define TOUCH_UI_DEVELOPER_MENU
-#endif
-
 //
 // ADC Button Debounce
 //
@@ -847,20 +603,7 @@
 #endif
 
 // @section leveling
-
-/**
- * Points to probe for all 3-point Leveling procedures.
- * Override if the automatically selected points are inadequate.
- */
-#if EITHER(AUTO_BED_LEVELING_3POINT, AUTO_BED_LEVELING_UBL)
-  //#define PROBE_PT_1_X 15
-  //#define PROBE_PT_1_Y 180
-  //#define PROBE_PT_2_X 15
-  //#define PROBE_PT_2_Y 20
-  //#define PROBE_PT_3_X 170
-  //#define PROBE_PT_3_Y 20
-#endif
-
+//TODO: cleanup, use or unuse, decide
 /**
  * Probing Margins
  *
@@ -1372,9 +1115,9 @@
    */
   #define HYBRID_THRESHOLD
 
-  #define X_HYBRID_THRESHOLD     115  // [mm/s]
-  #define Y_HYBRID_THRESHOLD     115
-  #define Z_HYBRID_THRESHOLD     115
+  #define X_HYBRID_THRESHOLD     150  // [mm/s]
+  #define Y_HYBRID_THRESHOLD     150
+  #define Z_HYBRID_THRESHOLD     150
   #define E0_HYBRID_THRESHOLD    50
 
   /**
@@ -1409,7 +1152,7 @@
 
   #if EITHER(SENSORLESS_HOMING, SENSORLESS_PROBING)
     // TMC2209: 0...255
-    #define X_STALL_SENSITIVITY  130
+    #define X_STALL_SENSITIVITY  120
     #define Y_STALL_SENSITIVITY  X_STALL_SENSITIVITY
     #define Z_STALL_SENSITIVITY  X_STALL_SENSITIVITY
     #define IMPROVE_HOMING_RELIABILITY

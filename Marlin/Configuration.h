@@ -27,14 +27,14 @@
  * Basic settings such as:
  * Advanced settings can be found in Configuration_adv.h
  */
-#define CONFIGURATION_H_VERSION 250822
+#define CONFIGURATION_H_VERSION 040922
 
 //===========================================================================
 //============================= DELTA Printer ===============================
 //===========================================================================
 
 // @section info
-#define STRING_CONFIG_H_AUTHOR "(BTT + TFT3.5 - Custom Delta, D.Adamik 26.08.2022)" // Author info of this build printed to the host during boot and M115
+#define STRING_CONFIG_H_AUTHOR "(BTT + TFT3.5 - Custom Delta, D.Adamik 04.09.2022)" // Author info of this build printed to the host during boot and M115
 // @section machine
 
 /**
@@ -53,7 +53,7 @@
 
 #ifndef MOTHERBOARD
   #define MOTHERBOARD BOARD_BTT_SKR_V1_4 // Choose the name from boards.h that matches your setup
-                                         // Pins moded for sensorless probing
+                                         // Pins moded HEAVILY for sensorless probing
 #endif
 
 #define CUSTOM_MACHINE_NAME "Delta Kosmos" // Name displayed in the LCD "Ready" message and Info menu
@@ -169,17 +169,17 @@
 //====================== PID > General settings =============================
 //===========================================================================
 #define BANG_MAX 255     // Limits current to nozzle while in bang-bang mode; 255=full current
-#define PID_FUNCTIONAL_RANGE 10 // If the temperature difference between the target temperature and the actual temperatureis more than PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
-#define PID_K1 0.95      // Smoothing factor within any PID loop
+#define PID_FUNCTIONAL_RANGE 50 // If the temperature difference between the target temperature and the actual temperatureis more than PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
+#define PID_K1 0.65      // Smoothing factor within any PID loop
 //===========================================================================
 //====================== PID > Hotend Temperature Control ===================
 //===========================================================================
 #define PIDTEMP
 #define PID_MAX 255 // Limits current to nozzle while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
 
-#define DEFAULT_Kp 10.9
-#define DEFAULT_Ki 0.6
-#define DEFAULT_Kd 50.4
+#define DEFAULT_Kp 12.00
+#define DEFAULT_Ki 0.75
+#define DEFAULT_Kd 50.00
 
 
 //===========================================================================
@@ -229,7 +229,7 @@
  */
 
 #define THERMAL_PROTECTION_HOTENDS // Enable thermal protection for all extruders
-#define THERMAL_PROTECTION_BED     // Enable thermal protection for the heated bed
+//#define THERMAL_PROTECTION_BED     // Enable thermal protection for the heated bed
 //#define THERMAL_PROTECTION_CHAMBER // Enable thermal protection for the heated chamber
 
 //===========================================================================
@@ -254,16 +254,14 @@
 #define PROBE_MANUALLY_STEP 0.025 // (mm)      // Set the steprate for papertest probing
 
 //============================== Delta Geometry =============================
-#define DELTA_DIAGONAL_ROD 248.88 // (mm)  // Center-to-center distance of the holes in the diagonal push rods.
-#define DELTA_PRINTABLE_RADIUS 110.0    // (mm) // Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
-#define DELTA_HEIGHT 290.0    //279.1814           //(mm) Get this value from G33 auto calibrate // Distance between bed and nozzle Z home position
-#define DELTA_SMOOTH_ROD_OFFSET 186.0   // (mm) // Horizontal offset from middle of printer to smooth rod center.
-#define DELTA_EFFECTOR_OFFSET 22.0      // (mm) // Horizontal offset of the universal joints on the end effector.
-#define DELTA_CARRIAGE_OFFSET 24.0    // (mm) // Horizontal offset of the universal joints on the carriages.
-#define DELTA_RADIUS 140.8603 // new data from escher calibration // Horizontal distance bridged by diagonal push rods when effector is centered.
+#define DELTA_DIAGONAL_ROD 244.88        // (mm) Center-to-center distance of the holes in the diagonal push rods.
+#define DELTA_RADIUS 140.8603            // (mm) Horizontal distance bridged by diagonal push rods when effector is centered.
+#define DELTA_PRINTABLE_RADIUS 80.0     // (mm) Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
+#define DELTA_HEIGHT 330.0              // (mm) Distance between bed and nozzle Z home position
 
-#define DELTA_ENDSTOP_ADJ { 0.0, 0.0, 0.0 } // Get these values from G33 auto calibrate
-#define DELTA_TOWER_ANGLE_TRIM { 0.0, 0.0, 0.0 } // Get these values from G33 auto calibrate
+#define DELTA_ENDSTOP_ADJ { 0.0, 0.0, 0.0 }       // Get these values from G33 auto calibrate
+#define DELTA_TOWER_ANGLE_TRIM { 0.0, 0.0, 0.0 }  // Get these values from G33 auto calibrate
+
 //#define DELTA_RADIUS_TRIM_TOWER { 0.0, 0.0, 0.0 } // Delta radius and diagonal rod adjustments (mm)
 //#define DELTA_DIAGONAL_ROD_TRIM_TOWER { 0.0, 0.0, 0.0 }
 
@@ -357,8 +355,19 @@
  * Override with M92
  *                                      X, Y, Z, E0
  */
-#define DEFAULT_XYZ_STEPS_PER_UNIT  105
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 105.5, 105.5, 105.5, 93 }
+
+// variables to calculate steps
+#define XYZ_FULL_STEPS_PER_ROTATION 200
+#define XYZ_MICROSTEPS 16               //real, not interpolated by TMC
+#define XYZ_BELT_PITCH 2                //GT2
+#define XYZ_PULLEY_TEETH 20             //20 teeth pulley
+
+#define E0_PULLEY_DIAMETER 35           //35mm brass pulley
+
+#define DEFAULT_XYZ_STEPS_PER_UNIT  ((XYZ_FULL_STEPS_PER_ROTATION) * (XYZ_MICROSTEPS)) / (double(XYZ_BELT_PITCH) * double(XYZ_PULLEY_TEETH))
+#define DEFAULT_E0_STEPS_PER_UNIT   ((XYZ_FULL_STEPS_PER_ROTATION) * (XYZ_MICROSTEPS)) / E0_PULLEY_DIAMETER
+
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { DEFAULT_XYZ_STEPS_PER_UNIT, DEFAULT_XYZ_STEPS_PER_UNIT, DEFAULT_XYZ_STEPS_PER_UNIT, DEFAULT_E0_STEPS_PER_UNIT }
 
 /**
  * Default Max Feed Rate (mm/s)
@@ -373,7 +382,7 @@
  * Override with M201
  *                                      X, Y, Z, E0
  */
-#define DEFAULT_MAX_ACCELERATION      { 3000, 3000, 3000, 3000 }
+#define DEFAULT_MAX_ACCELERATION      { 2000, 2000, 2000, 2000 }
 
 /**
  * Default Acceleration (change/s) change = mm/s
@@ -384,8 +393,8 @@
  *   M204 T    Travel Acceleration
  */
 #define DEFAULT_ACCELERATION          2000    // X, Y, Z and E acceleration for printing moves
-#define DEFAULT_RETRACT_ACCELERATION  3000    // E acceleration for retracts
-#define DEFAULT_TRAVEL_ACCELERATION   3000    // X, Y, Z acceleration for travel (non printing) moves
+#define DEFAULT_RETRACT_ACCELERATION  2000    // E acceleration for retracts
+#define DEFAULT_TRAVEL_ACCELERATION   2000    // X, Y, Z acceleration for travel (non printing) moves
 
 /**
  * Default Jerk limits (mm/s)
@@ -397,10 +406,10 @@
  */
 #define CLASSIC_JERK
 #if ENABLED(CLASSIC_JERK)
-  #define DEFAULT_XJERK 10.0
+  #define DEFAULT_XJERK 5.0
   #define DEFAULT_YJERK DEFAULT_XJERK
   #define DEFAULT_ZJERK DEFAULT_XJERK // Must be same as XY for delta
-  #define DEFAULT_EJERK 20.0
+  #define DEFAULT_EJERK 5.0
 
 #endif
 
@@ -463,7 +472,7 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { 0, 0, 0 }
+#define NOZZLE_TO_PROBE_OFFSET { 0, 0, 0.45 }
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
 #define PROBING_MARGIN 20
@@ -583,9 +592,9 @@
   #define MAX_SOFTWARE_ENDSTOP_Z
 #endif
 
-#if EITHER(MIN_SOFTWARE_ENDSTOPS, MAX_SOFTWARE_ENDSTOPS)
-  #define SOFT_ENDSTOPS_MENU_ITEM  // Enable/Disable software endstops from the LCD
-#endif
+//#if EITHER(MIN_SOFTWARE_ENDSTOPS, MAX_SOFTWARE_ENDSTOPS)
+  //#define SOFT_ENDSTOPS_MENU_ITEM  // Enable/Disable software endstops from the LCD 04.09.2022 DA: no LCD avalible for marlin
+//#endif
 
 /**
  * Filament Runout Sensors
@@ -921,28 +930,6 @@
 #define SDSUPPORT
 
 //=============================================================================
-//=======================   LCD / Controller Selection  =======================
-//=========================      (Graphical LCDs)      ========================
-//=============================================================================
-
-//
-// CONTROLLER TYPE: Graphical 128x64 (DOGM)
-//
-// IMPORTANT: The U8glib library is required for Graphical Display!
-//            https://github.com/olikraus/U8glib_Arduino
-//
-// NOTE: If the LCD is unresponsive you may need to reverse the plugs.
-//
-
-//
-// RepRapDiscount FULL GRAPHIC Smart Controller
-// https://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
-//
-
-//TODO: check if delete? after all no marlin lcd used
-//#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER //21.08.2022 DA: BTT TFT3.5 only in Touch mode, marlin legacy disabled
-
-//=============================================================================
 //=============================== Extra Features ==============================
 //=============================================================================
 
@@ -968,15 +955,6 @@
 // some of the PWM cycles are stretched so on average the desired
 // duty cycle is attained.
 //#define SOFT_PWM_DITHER
-
-// Support for BlinkM/CyzRgb
-//#define BLINKM
-
-// Support for PCA9632 PWM LED driver
-//#define PCA9632
-
-// Support for PCA9533 PWM LED driver
-//#define PCA9533
 
 /**
  * RGB LED / LED Strip Control
